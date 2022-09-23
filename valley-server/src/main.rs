@@ -35,12 +35,16 @@ async fn main() {
                     Sender(sender) => senders.push(sender),
                     Msg(msg) => {
                         println!("Sending message to all: {}", msg);
-                        senders.iter_mut().for_each(|sender| {sender.send(msg.clone());})
+                        for sender in senders.iter_mut() {
+                            println!("Sending message to a client.");
+                            sender.send(msg.clone()).await;
+                        }
                     }
                 },
                 None => break,
             }
         }
+        println!("Sending task closed successfully.")
     });
 
     while let Ok((socket, _)) = listener.accept().await {
